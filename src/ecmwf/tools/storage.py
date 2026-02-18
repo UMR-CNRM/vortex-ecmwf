@@ -14,7 +14,10 @@ class EctransArchive(Archive):
         attr=dict(
             tube=dict(
                 values=["ectrans"],
-            )
+            ),
+            inifile=dict(
+                default="@archive-[storage].ini",
+            ),
         ),
     )
 
