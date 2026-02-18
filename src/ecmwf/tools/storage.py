@@ -17,6 +17,7 @@ class EctransArchive(Archive):
             ),
             inifile=dict(
                 default="@archive-ectrans.ini",
+                optional=True,
             ),
         ),
     )
