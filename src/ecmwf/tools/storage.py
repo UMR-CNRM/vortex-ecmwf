@@ -16,7 +16,7 @@ class EctransArchive(Archive):
                 values=["ectrans"],
             ),
             inifile=dict(
-                default="@archive-[storage].ini",
+                default="@archive-ectrans.ini",
             ),
         ),
     )
