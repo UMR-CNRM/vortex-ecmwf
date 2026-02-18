@@ -15,9 +15,15 @@ class EctransArchive(Archive):
             tube=dict(
                 values=["ectrans"],
             ),
-            inifile=dict(
-                default="@archive-ectrans.ini",
+            ectrans_gateway=dict(
+                info="The gateway to use",
                 optional=True,
+                default=None,
+            ),
+            ectrans_remote=dict(
+                info="The remote to use",
+                optional=True,
+                default=None,
             ),
         ),
     )
@@ -42,12 +48,10 @@ class EctransArchive(Archive):
     def _ectransretrieve(self, item, local, **kwargs):
         """Actual _retrieve using ectrans"""
         remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None),
-            inifile=self.inifile,
-            storage=self.storage,
+            remote=kwargs.get("remote", None) or self.ectrans_remote
         )
         gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None), inifile=self.inifile
+            gateway=kwargs.get("gateway", None) or self.ectrans_gateway
         )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
@@ -60,12 +64,10 @@ class EctransArchive(Archive):
     def _ectransinsert(self, item, local, **kwargs):
         """Actual _insert using ectrans"""
         remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None),
-            inifile=self.inifile,
-            storage=self.storage,
+            remote=kwargs.get("remote", None) or self.ectrans_remote
         )
         gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None), inifile=self.inifile
+            gateway=kwargs.get("gateway", None) or self.ectrans_gateway
         )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
