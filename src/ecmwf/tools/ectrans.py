@@ -53,7 +53,6 @@ class ECtransTools(addons.Addon):
         """Initialize the gateway attribute used by ECtrans.
 
         :param gateway: gateway used if provided
-        :param inifile: configuration file in which the gateway is read if provided
         :return: the gateway to be used by ECtrans
         """
         if gateway is not None:
@@ -61,18 +60,20 @@ class ECtransTools(addons.Addon):
 
         return from_config("ectrans", "gateway")
 
-    def ectrans_remote_init(self, remote=None):
+    def ectrans_remote_init(self, remote=None, storage=None):
         """Initialize the remote attribute used by Ectrans.
 
         :param remote: remote used if provided
-        :param inifile: configuration file in which the remote is read if provided
         :param storage: the store place
         :return: the remote to be used by ECtrans
         """
         if remote is not None:
             return remote
 
-        return from_config("ectrans", "remote")
+        if storage is None:
+            storage = "default"
+
+        return from_config("ectrans", f"remote_{storage}")
 
     @staticmethod
     def ectrans_defaults_init(**kwargs):

@@ -48,7 +48,8 @@ class EctransArchive(Archive):
     def _ectransretrieve(self, item, local, **kwargs):
         """Actual _retrieve using ectrans"""
         remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None) or self.ectrans_remote
+            remote=kwargs.get("remote", None) or self.ectrans_remote,
+            storage=self.storage,
         )
         gateway = self.sh.ectrans_gateway_init(
             gateway=kwargs.get("gateway", None) or self.ectrans_gateway
