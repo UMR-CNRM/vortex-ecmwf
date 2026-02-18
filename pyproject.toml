@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vortex-ecmwf"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = []
+license = {text = "CECILL-C"}
+authors = [
+    {name = "The Vortex Team", email = "vortex.support@meteo.fr"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: CeCILL-C Free Software License Agreement (CECILL-C)",
+]
+dependencies = [
+    "vortex-nwp",
+]
+
+[project.entry-points.vtx]
+ecmwf = "vortex_ecmwf"
+
+[tool.setuptools.package-dir]
+vortex_ecmwf = "src/ecmwf"
+
+[tool.ruff]
+line-length = 79
