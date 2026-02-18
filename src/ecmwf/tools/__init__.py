@@ -2,7 +2,7 @@
 Specific ECMWF tools.
 """
 
-from . import ectrans as ectrans
+from . import addons as addons
 from . import storage as storage
 
 #: No automatic export
