@@ -7,7 +7,7 @@ import logging
 import footprints
 from vortex.config import from_config
 from vortex.tools import addons
-from vortex.tools.systems import fmtshcmd
+from vortex.tools.systems import OSExtended, fmtshcmd
 
 from .interfaces import ECtrans
 
@@ -46,34 +46,52 @@ class ECtransTools(addons.Addon):
             kind=dict(
                 values=["ectrans"],
             ),
+            gateway=dict(
+                info="The gateway to use",
+                optional=True,
+                default=None,
+            ),
+            remote=dict(
+                info="The remote to use",
+                optional=True,
+                default=None,
+            ),
         ),
     )
 
-    def ectrans_gateway_init(self, gateway=None):
+    gateway: str | None
+    remote: str | None
+    sh: OSExtended
+
+    def ectrans_gateway_init(self):
         """Initialize the gateway attribute used by ECtrans.
 
-        :param gateway: gateway used if provided
         :return: the gateway to be used by ECtrans
         """
-        if gateway is not None:
-            return gateway
+        if self.gateway is not None:
+            return self.gateway
 
-        return from_config("ectrans", "gateway")
+        gateway = from_config("ectrans", "gateway")
+        if gateway in self.sh.env:
+            return self.sh.env[gateway]
+        return gateway
 
-    def ectrans_remote_init(self, remote=None, storage=None):
+    def ectrans_remote_init(self, storage=None):
         """Initialize the remote attribute used by Ectrans.
 
-        :param remote: remote used if provided
         :param storage: the store place
         :return: the remote to be used by ECtrans
         """
-        if remote is not None:
-            return remote
+        if self.remote is not None:
+            return self.remote
 
         if storage is None:
             storage = "default"
 
-        return from_config("ectrans", f"remote_{storage}")
+        remote = from_config("ectrans", f"remote_{storage}")
+        if remote in self.sh.env:
+            return self.sh.env[remote]
+        return remote
 
     @staticmethod
     def ectrans_defaults_init(**kwargs):
