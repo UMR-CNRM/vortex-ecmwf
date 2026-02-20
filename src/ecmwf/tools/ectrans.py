@@ -5,10 +5,9 @@ System Addons to support ECMWF' EcTrans data transfert tool.
 import logging
 
 import footprints
-from vortex.config import get_from_config_w_default
+from vortex.config import from_config
 from vortex.tools import addons
-from vortex.tools.systems import fmtshcmd
-from vortex.util.config import GenericConfigParser
+from vortex.tools.systems import OSExtended, fmtshcmd
 
 from .interfaces import ECtrans
 
@@ -60,87 +59,39 @@ class ECtransTools(addons.Addon):
         ),
     )
 
-    def _get_ectrans_setting(self, option, guess=None, inifile=None):
-        """
-        Use the configuration data (from the curent target object or from
-        **inifile**) to find out the appropriate configuration setting in the
-        environment.
+    gateway: str | None
+    remote: str | None
+    sh: OSExtended
 
-        :param option: The configuration key to look for (gateway, remote)
-        :param guess: gateway used if provided
-        :param inifile: configuration file in which the option is read if provided
-        :return: the appropriate configuration setting
-
-        :note: If the method is unable to find an appropriate value, a
-               :class:`ECtransConfigurationError` exception is raised.
-        """
-        actual_setting = guess
-        # Use inifile first (if provided)
-        if actual_setting is None and inifile is not None:
-            actual_config = GenericConfigParser(inifile=inifile)
-            actual_setting_key = None
-            if actual_config.has_section(
-                "ectrans"
-            ) and actual_config.has_option("ectrans", option):
-                actual_setting_key = actual_config.get("ectrans", option)
-            if actual_setting_key:
-                actual_setting = self.sh.env[actual_setting_key]
-        # Use the system's configuration file otherwise
-        if actual_setting is None:
-            actual_setting_key = get_from_config_w_default(
-                section="ectrans", key=option, default=None
-            )
-            if actual_setting_key is not None:
-                actual_setting = self.sh.env[actual_setting_key]
-        # Check if it worked ?
-        if actual_setting is None:
-            raise ECtransConfigurationError(
-                "Could not find a proper value for an ECtrans setting ({:s}).".format(
-                    option
-                )
-            )
-        return actual_setting
-
-    def ectrans_gateway_init(self, gateway=None, inifile=None):
+    def ectrans_gateway_init(self):
         """Initialize the gateway attribute used by ECtrans.
 
-        :param gateway: gateway used if provided
-        :param inifile: configuration file in which the gateway is read if provided
         :return: the gateway to be used by ECtrans
         """
         if self.gateway is not None:
             return self.gateway
 
-        return self._get_ectrans_setting(
-            option="gateway", guess=gateway, inifile=inifile
-        )
+        gateway = from_config("ectrans", "gateway")
+        if gateway in self.sh.env:
+            return self.sh.env[gateway]
+        return gateway
 
-    def ectrans_remote_init(
-        self, remote=None, inifile=None, storage="default"
-    ):
+    def ectrans_remote_init(self, storage=None):
         """Initialize the remote attribute used by Ectrans.
 
-        :param remote: remote used if provided
-        :param inifile: configuration file in which the remote is read if provided
         :param storage: the store place
         :return: the remote to be used by ECtrans
         """
         if self.remote is not None:
             return self.remote
 
-        try:
-            return self._get_ectrans_setting(
-                option="remote_{:s}".format(storage),
-                guess=remote,
-                inifile=inifile,
-            )
-        except ECtransConfigurationError:
-            if storage != "default":
-                return self._get_ectrans_setting(
-                    option="remote_default", guess=remote, inifile=inifile
-                )
-            else:
-                raise
+        if storage is None:
+            storage = "default"
+
+        remote = from_config("ectrans", f"remote_{storage}")
+        if remote in self.sh.env:
+            return self.sh.env[remote]
+        return remote
 
     @staticmethod
     def ectrans_defaults_init(**kwargs):

@@ -3,7 +3,7 @@ This package is used to implement the Archive Store class only used at ECMWF.
 """
 
 from vortex.tools.storage import Archive
-from vortex.tools.systems import ExecutionError
+from vortex.tools.systems import ExecutionError, OSExtended
 
 
 class EctransArchive(Archive):
@@ -15,12 +15,10 @@ class EctransArchive(Archive):
             tube=dict(
                 values=["ectrans"],
             ),
-            inifile=dict(
-                default="@archive-ectrans.ini",
-                optional=True,
-            ),
         ),
     )
+
+    sh: OSExtended
 
     @staticmethod
     def _ectransfullpath(item, **kwargs):
@@ -41,14 +39,8 @@ class EctransArchive(Archive):
 
     def _ectransretrieve(self, item, local, **kwargs):
         """Actual _retrieve using ectrans"""
-        remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None),
-            inifile=self.inifile,
-            storage=self.storage,
-        )
-        gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None), inifile=self.inifile
-        )
+        remote = self.sh.ectrans_remote_init(self.storage)
+        gateway = self.sh.ectrans_gateway_init()
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
             cpipeline=kwargs.get("compressionpipeline", None),
@@ -60,12 +52,10 @@ class EctransArchive(Archive):
     def _ectransinsert(self, item, local, **kwargs):
         """Actual _insert using ectrans"""
         remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None),
-            inifile=self.inifile,
-            storage=self.storage,
+            remote=kwargs.get("remote", None) or self.ectrans_remote
         )
         gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None), inifile=self.inifile
+            gateway=kwargs.get("gateway", None) or self.ectrans_gateway
         )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
