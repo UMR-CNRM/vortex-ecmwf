@@ -63,13 +63,16 @@ class ECtransTools(addons.Addon):
     remote: str | None
     sh: OSExtended
 
-    def ectrans_gateway_init(self):
+    def ectrans_gateway_init(self, gateway=None):
         """Initialize the gateway attribute used by ECtrans.
 
         :return: the gateway to be used by ECtrans
         """
         if self.gateway is not None:
             return self.gateway
+
+        if gateway is not None:
+            return gateway
 
         gateway = from_config("ectrans", "gateway")
         if gateway in self.sh.env:
