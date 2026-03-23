@@ -51,11 +51,9 @@ class EctransArchive(Archive):
 
     def _ectransinsert(self, item, local, **kwargs):
         """Actual _insert using ectrans"""
-        remote = self.sh.ectrans_remote_init(
-            remote=kwargs.get("remote", None) or self.ectrans_remote
-        )
+        remote = self.sh.ectrans_remote_init(remote=kwargs.get("remote", None))
         gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None) or self.ectrans_gateway
+            gateway=kwargs.get("gateway", None)
         )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
