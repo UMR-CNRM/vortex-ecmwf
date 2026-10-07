@@ -39,8 +39,12 @@ class EctransArchive(Archive):
 
     def _ectransretrieve(self, item, local, **kwargs):
         """Actual _retrieve using ectrans"""
-        remote = self.sh.ectrans_remote_init(self.storage)
-        gateway = self.sh.ectrans_gateway_init()
+        remote = self.sh.ectrans_remote_init(
+            remote=kwargs.get("ectrans_remote", None), storage=self.hostname()
+        )
+        gateway = self.sh.ectrans_gateway_init(
+            gateway=kwargs.get("ectrans_gateway", None)
+        )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),
             cpipeline=kwargs.get("compressionpipeline", None),
@@ -52,10 +56,10 @@ class EctransArchive(Archive):
     def _ectransinsert(self, item, local, **kwargs):
         """Actual _insert using ectrans"""
         remote = self.sh.ectrans_remote_init(
-            storage=kwargs.get("remote", None)
+            remote=kwargs.get("ectrans_remote", None), storage=self.hostname()
         )
         gateway = self.sh.ectrans_gateway_init(
-            gateway=kwargs.get("gateway", None)
+            gateway=kwargs.get("ectrans_gateway", None)
         )
         extras = dict(
             fmt=kwargs.get("fmt", "foo"),

@@ -34,10 +34,10 @@ class FinderECMWF(Finder):
         rpath = self.ectransfullpath(remote)
         LOG.info("ectransget on %s (to: %s)", rpath, local)
         ectrans_remote = self.system.ectrans_remote_init(
-            remote=options.get("remote", None), storage=self.hostname()
+            remote=options.get("ectrans_remote", None), storage=self.hostname()
         )
         ectrans_gateway = self.system.ectrans_gateway_init(
-            gateway=options.get("gateway", None)
+            gateway=options.get("ectrans_gateway", None)
         )
         rc = self.system.ectransget(
             source=rpath,
@@ -56,10 +56,10 @@ class FinderECMWF(Finder):
         rpath = self.ectransfullpath(remote)
         LOG.info("ectransput on %s (from: %s)", rpath, local)
         ectrans_remote = self.system.ectrans_remote_init(
-            remote=options.get("remote", None), storage=self.hostname()
+            remote=options.get("ectrans_remote", None), storage=self.hostname()
         )
         ectrans_gateway = self.system.ectrans_gateway_init(
-            gateway=options.get("gateway", None)
+            gateway=options.get("ectrans_gateway", None)
         )
         return self.system.ectransput(
             source=local,
