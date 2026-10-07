@@ -68,23 +68,27 @@ class ECtransTools(addons.Addon):
 
         :return: the gateway to be used by ECtrans
         """
-        if self.gateway is not None:
-            return self.gateway
-
         if gateway is not None:
             return gateway
+
+        if self.gateway is not None:
+            return self.gateway
 
         gateway = from_config("ectrans", "gateway")
         if gateway in self.sh.env:
             return self.sh.env[gateway]
         return gateway
 
-    def ectrans_remote_init(self, storage=None):
+    def ectrans_remote_init(self, storage=None, remote=None):
         """Initialize the remote attribute used by Ectrans.
 
         :param storage: the store place
+        :param remote: the remote to be used by ECtrans
         :return: the remote to be used by ECtrans
         """
+        if remote is not None:
+            return remote
+
         if self.remote is not None:
             return self.remote
 
